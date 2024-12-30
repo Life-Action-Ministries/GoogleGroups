@@ -1,0 +1,152 @@
+﻿@model GoogleGroups.Models.ContactModel;
+@using GoogleGroups.App_Code;
+@using GoogleGroups.Extensions
+@using Newtonsoft.Json;
+
+@{
+    ViewData["Title"] = "Contact";
+    var contact = Model;
+    var user = Context.Session.GetObject<UserModel>("User");
+
+    if (contact.Name != null)
+    {
+        <h1><img src="@contact.PhotoUrl" class="profile" /> @contact.Name</h1>
+        <hr style="height:4px;border-width:2;color:#0e597d;background-color:#0e597d">
+        <div class="list-group-item rounded">
+            <p>Email: @contact.Email</p>
+            <p>Phone: @contact.Phone</p>
+        </div>
+
+        @if (!contact.Email.Contains(Helper.EnvVars("Domain")) && MyAuthorizeAttribute.GetUserPermission(user.UserName, "contacts") >= 2)
+        {
+            <form method="post" action="DeleteContact">
+                <input type="hidden" name="email" value="@contact.Email" />
+                <a href="/Contacts/UpdateContact?email=@contact.Email&name=@contact.Name&phone=@contact.Phone"><button type="button" class="btn-blue">Edit</button></a>
+                <button type="submit" name="submit" value="1" class="btn-red">Remove</button>
+            </form>
+        }
+        
+        <hr style="height:4px;border-width:2;color:#0e597d;background-color:#0e597d">
+
+        <h2>Groups</h2>
+        <p class="text-danger">Note: It can take up to 5 minutes for changes to appear.</p>
+        <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for groups...">
+
+        <ul id="myUL">
+
+            @{
+                foreach (var item in contact.Groups)
+                {
+                    if (item.IsMember is true)
+                    {
+                        <li>
+                            <a href="/Groups/Members?email=@item.Id&name=@item.Name">
+                                <div class="row">
+                                    <div class="column left">@item.Name</div>
+                                    @if (user.ContactAccess >= 2)
+                                    {
+                                        <div class="column right">
+                                            <form method="post" asp-controller="Groups" asp-action="Members">
+                                                <input type="hidden" name="group" value="@item.Id" />
+                                                <input type="hidden" name="email" value="@contact.Email" />
+                                                <button type="submit" class="btn-red" name="submit" value="1" style="float:right;width:85px">Remove</button>
+                                            </form>
+                                        </div>
+                                    }
+                                </div>
+                            </a>
+                        </li>
+                    }
+                }
+                <hr style="height:4px;border-width:2;color:#0e597d;background-color:#0e597d">
+                foreach (var item in contact.Groups)
+                {
+                    if (item.IsMember is false)
+                    {
+                        <li>
+                            <a href="/Groups/Members?email=@item.Id&name=@item.Name">
+                                <div class="row">
+                                    <div class="column left">@item.Name</div>
+                                    @if (user.ContactAccess >= 2)
+                                    {
+                                        <div class="column right">
+                                            <form method="post" asp-controller="Groups" asp-action="Members">
+                                                <input type="hidden" name="group" value="@item.Id" />
+                                                <input type="hidden" name="email" value="@contact.Email" />
+                                                <button type="submit" class="btn-blue" name="submit" value="0" style="float:right;width:85px">Add</button>
+                                            </form>
+                                        </div>
+                                    }
+                                </div>
+                            </a>
+                        </li>
+                    }
+                }
+            }
+        </ul>
+
+
+        
+    }
+    // else if(contact != null && contact.Email == null)
+    // {
+    //     <h1><img src="@contact.PhotoUrl" alt="Avatar" width="100" /> @contact.Name</h1>
+    //     <div class="list-group-item">
+    //         <p>@contact.SecondaryEmails[0]</p>
+    //         <p>@contact.Phone</p>
+    // </div>
+    // }
+    else
+    {
+        <h1><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAPFBMVEXk5ueutLepsLPo6uursbXJzc/p6+zj5ea2u76orrKvtbi0ubzZ3N3O0dPAxcfg4uPMz9HU19i8wcPDx8qKXtGiAAAFTElEQVR4nO2d3XqzIAyAhUD916L3f6+f1m7tVvtNINFg8x5tZ32fQAIoMcsEQRAEQRAEQRAEQRAEQRAEQRAEQRAEQRAEQRAEQTghAJD1jWtnXJPP/54IgNzZQulSmxvTH6oYXX4WS+ivhTbqBa1r26cvCdCu6i0YXbdZ0o4A1rzV+5IcE3YE+z58T45lqo7g1Aa/JY5tgoqQF3qb382x7lNzBLcxft+O17QUYfQI4IIeklKsPSN4i6LKj/7Zm8n99RbHJpEw9gEBXNBpKIYLJqKYRwjOikf//r+J8ZsVuacbqCMNleI9TqGLGqMzhnVdBOdd6F/RlrFijiCoVMk320CBIahUxTWI0KKEcJqKbMdpdJb5QvdHq6wCI5qhKlgGMS/RBHkubWDAE+QZxB4xhCyDiDkLZxgGEVdQldzSKbTIhmZkFkSEPcVvmBn2SMuZB9od7fQDsMiDdKJjFUSCQarM5WirZ3C2TT/htYnyPcPfgrFHWz0BI74gr6J/IZiGUxAZGQLqmvQLTrtE/Go4YxhVRIpEw+sww1IIcqr5NKmUUzLF3d4/qPkYIp2T/obPuemlojFUR4t9Q2Vojhb7BmgElWHzLPH8hucfpefPNFTVgs9h1AdU/Pin96vwWbWdf+X9Absn3OdO34aMdsDnP8WgKYisTqI6CkNGqZQo1XA6Ef6AU32SJzOcBukHPF07/xNSgmHKa5BOhtezv6mA/rYJpwXNAnbRZ1XuF3BzDcO3vpA3+ny2909gbqE4hhD3LIPhLLyBNhPZvbZ3B+3tPYa18A7auSlXQayKwTPNLKDcuOB0xPYKDPFTkWsevQPRZ1J8Hji9I1KQ34r7hZhrwNwOZ97QxNx0drwn4QI0wQk1DcEsfKCWKdxVvxPSNUIp/knmAXT+nT+Ko3+0H96rcNb3m1fx7MBTJdeBJ7uFcWsc0wvgAsC4pROW0l2inbAmIBv/7GZmuhQH6API2rr8T0e6yuZJ+80A9LZeG62T3tik31XwxtwZcizKuTHkMjB1WdZde4Kmic/A5ZI3rr1ae21d08PlVHYfAaxw9G9CYRbJ+8ZdbTcMRV1XM3VdF0M32vtoTdZ0+u29s0OttJ5bz64UwinjaFMVY9vkqc3KKSxN21Xl+0L4Q3Vuv1tYl0pqnX6ms4XetFz7gdZVAgUEoJntfOUe4ZwsHd9FzqQ3Vv6xe41l0XJcqcKl6TZvlv7ClAW3BsqQW4X7ypApB8dmTgK4IX5wvqIVj33HtD2qSG4BqznxdIefL27Y4sahi0MdIdvUsDva8agGGbCtITmCY31MHD2O0uIdh/0rJDQ1VX5Zdxz3rR2QDbv6qXl9vudzqQtGm1Jv9LDXOsfvvB7VcZ8PDKD0mQ1VHPYQ9O+Yj4hR1IUD8rBnn3ho2m8oQMxbCFiKlL2ioSW5heeJqegED52CzxCtcGD3Kv8Wms9EYLyUhwaFIhSMBClevWEmiK/Iaogu4H7sg6ppQhQG8RUqivuTGOAJOg6FfgW0q0M0PQMRMEgXaeNf3SYDZ8PIMI0+wHgr/MgN7wYwpiLjCCqM6ydUDZLQiB6nDdNC8SDyig3jPPpFXGcC9O8BUBDVmgBY59E7Md/35Loe/UVEECEJwYggJjELZ4J71SaQSBeC02n4Da29CayJNA28SAhd2CQyC1Xw6pSmGSINQVuMhAZp4DClan9MgmkDDNmezqwS8sgtlXK/EPBhoaSmYVC/F7IO1jQEdHOlabpKh3+jzLQSTUiq4X2I+Ip/zU8rlaqAvkS21ElR+gqu3zbjjL+hIAiCIAiCIAiCIAiCsCf/AKrfVhSbvA+DAAAAAElFTkSuQmCC" alt="Avatar" class="profile" /> @ViewData["email"]</h1>
+        <hr style="height:4px;border-width:2;color:#0e597d;background-color:#0e597d">
+      
+        <a href="/Contacts/AddContact?email=@ViewData["email"]"><button type="button" class="btn-blue">Add Contact</button></a>
+        <hr style="height:4px;border-width:2;color:#0e597d;background-color:#0e597d">
+        <h2>Groups</h2>
+       
+        <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for groups...">
+
+        <ul id="myUL">
+
+            @{
+                foreach (var item in contact.Groups)
+                {
+                    if (item.IsMember is true)
+                    {
+                        <li>
+                            <a href="/Groups/Members?email=@item.Id">
+                                <div class="row">
+                                    <div class="column left">
+                                        @item.Name
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                    }
+                }
+            }
+        </ul>
+    }
+}
+<script>
+    function myFunction() {
+        // Declare variables
+        var input, filter, ul, li, a, i, txtValue;
+        input = document.getElementById('myInput');
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("myUL");
+        li = ul.getElementsByTagName('li');
+
+        // Loop through all list items, and hide those who don't match the search query
+        for (i = 0; i < li.length; i++) {
+            a = li[i].getElementsByTagName("a")[0];
+            txtValue = a.textContent || a.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            }
+        }
+    }
+</script>

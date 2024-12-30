@@ -1,0 +1,24 @@
+﻿@model Google.Apis.PeopleService.v1.Data.Person
+@using GoogleGroups.App_Code
+@{
+    ViewData["Title"] = "Hello";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>This page contains information about the authenticated user...</p>
+
+@if(Model != null)
+{
+    var name = Model.Names.FirstOrDefault()?.DisplayName;
+    var email = Model.EmailAddresses.FirstOrDefault()?.Value;
+    <p>
+        <strong>Name</strong> <code>@name</code>
+        <br>
+        <strong>Email Address</strong> <code>@email</code>
+    </p>
+    if (MyAuthorizeAttribute.GetUserPermission(email.Split("@")[0], "testgroup123") >= 2)
+    {
+      <p>Test</p>  
+    }
+}

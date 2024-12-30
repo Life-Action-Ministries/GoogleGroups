@@ -1,0 +1,159 @@
+﻿@model List<GoogleGroups.Models.GroupModel>;
+@using GoogleGroups.App_Code;
+@using GoogleGroups.Extensions
+@using Newtonsoft.Json;
+
+@{
+    ViewData["Title"] = "Groups";
+
+    var groups = Model as List<GroupModel>;
+    var user = Context.Session.GetObject<UserModel>("User");
+}
+
+<style type="text/css">
+    .form-popup {
+        display: none;
+        position: relative;
+        bottom: 20px;
+        top: 20px;
+        border: 3px solid #f1f1f1;
+        z-index: 9;
+        margin-bottom: 30px;
+    }
+
+    /* Add styles to the form container */
+    .form-container {
+        max-width: 100%;
+        padding: 10px;
+        background-color: whitesmoke;
+    }
+
+        /* Full-width input fields */
+        .form-container input[type=text], .form-container input[type=password] {
+            width: 50%;
+            padding: 15px;
+            margin: 5px 5px 22px 5px;
+            border: 2px;
+            border-color: lightgray;
+            background: #f1f1f1;
+        }
+
+            /* When the inputs get focus, do something */
+            .form-container input[type=text]:focus, .form-container input[type=password]:focus {
+                background-color: #ddd;
+                outline: none;
+                padding: 10px;
+            }
+
+        /* Set a style for the submit/login button */
+        .form-container .btn {
+            background-color: #04AA6D;
+            color: white;
+            padding: 16px 20px;
+            border: none;
+            cursor: pointer;
+            width: 40%;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        /* Add a red background color to the cancel button */
+        .form-container .cancel {
+            background-color: red;
+        }
+</style>
+
+<div class="row">
+    <div class="column center">
+        <h1>Groups</h1>
+    </div>
+    <div class="column center_right">
+
+        @if (user.ContactAccess == 4)
+        {
+            <button class="btn-blue" onclick="openForm('myForm')" style="float:right;">Create Group</button>
+        }
+       
+    </div>
+    <hr style="height:4px;border-width:2;color:#0e597d;background-color:#0e597d;margin-top:10px">
+
+    <div class="form-popup" id="myForm" style="background-color:whitesmoke">
+        <form method="post" class="form-container">
+            <h2>Create Group</h2>
+
+            <div>
+                <label for="groupName"><b>Group Name</b></label>
+                <input type="text" placeholder="Enter group name" name="groupName" required>
+            </div>
+            <div>
+                <label for="groupId"><b>Group Email</b></label>
+                <input type="text" placeholder="Enter email" name="groupId" required>
+            </div>
+            <div>
+                <label for="description"><b>Description</b></label>
+                <input type="text" placeholder="Description" name="description">
+            </div>
+            <div>
+                <button type="submit" class="btn-blue" name="submit">Submit</button>
+                <button type="button" class="btn-red" onclick="closeForm('myForm')">Close</button>
+            </div>
+        </form>
+    </div>
+
+
+
+<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for groups...">
+
+<ul id="myUL">
+
+    @{
+        foreach (var item in groups)
+        {
+            <li>
+                <a href="/Groups/Members?email=@item.Id&name=@item.Name">
+                    <div class="row">
+                        <div class="column left">
+                            @item.Name
+                            <span class="badge">@item.MembersCount</span>
+                        </div>
+                    </div>
+                </a>
+            </li>
+        }
+    }
+</ul>
+
+
+
+
+<script>
+    function myFunction() {
+        // Declare variables
+        var input, filter, ul, li, a, i, txtValue;
+        input = document.getElementById('myInput');
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("myUL");
+        li = ul.getElementsByTagName('li');
+
+        // Loop through all list items, and hide those who don't match the search query
+        for (i = 0; i < li.length; i++) {
+            a = li[i].getElementsByTagName("a")[0];
+            txtValue = a.textContent || a.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            }
+        }
+    }
+</script>
+
+<script>
+    function openForm(id) {
+        document.getElementById(id).style.display = "block";
+    }
+
+    function closeForm(id) {
+        document.getElementById(id).style.display = "none";
+    }
+</Script>

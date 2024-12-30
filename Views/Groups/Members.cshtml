@@ -1,0 +1,488 @@
+﻿@model GoogleGroups.Models.GroupModel;
+@using GoogleGroups.App_Code;
+@using GoogleGroups.Extensions
+@using Newtonsoft.Json;
+
+@{
+    ViewData["Title"] = "Members";
+    // var output = ViewData["output"] as List<ContactModel>;
+    // var email = ViewData["email"];
+
+    // string[] countries = { "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Anguilla", "Antigua &amp; Barbuda", "Argentina", "Armenia", "Aruba", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia", "Bosnia &amp; Herzegovina", "Botswana", "Brazil", "British Virgin Islands", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Cayman Islands", "Central Arfrican Republic", "Chad", "Chile", "China", "Colombia", "Congo", "Cook Islands", "Costa Rica", "Cote D Ivoire", "Croatia", "Cuba", "Curacao", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Falkland Islands", "Faroe Islands", "Fiji", "Finland", "France", "French Polynesia", "French West Indies", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Gibraltar", "Greece", "Greenland", "Grenada", "Guam", "Guatemala", "Guernsey", "Guinea", "Guinea Bissau", "Guyana", "Haiti", "Honduras", "Hong Kong", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Isle of Man", "Israel", "Italy", "Jamaica", "Japan", "Jersey", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Macau", "Macedonia", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Montserrat", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauro", "Nepal", "Netherlands", "Netherlands Antilles", "New Caledonia", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "Norway", "Oman", "Pakistan", "Palau", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Puerto Rico", "Qatar", "Reunion", "Romania", "Russia", "Rwanda", "Saint Pierre &amp; Miquelon", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea", "South Sudan", "Spain", "Sri Lanka", "St Kitts &amp; Nevis", "St Lucia", "St Vincent", "Sudan", "Suriname", "Swaziland", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Timor L'Este", "Togo", "Tonga", "Trinidad &amp; Tobago", "Tunisia", "Turkey", "Turkmenistan", "Turks &amp; Caicos", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States of America", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Virgin Islands (US)", "Yemen", "Zambia", "Zimbabwe" };
+    var User = Context.Session.GetObject<UserModel>("User");
+}
+
+<style type="text/css">
+
+
+
+    /* Button used to open the contact form - fixed at the bottom of the page */
+    .open-button {
+    background-color: #555;
+    color: white;
+    padding: 16px 20px;
+    border: none;
+    cursor: pointer;
+    opacity: 0.8;
+    position: relative;
+    top: 20px;
+    margin-bottom: 50px;
+    /*right: 28px;*/
+    /*width: 280px;*/
+    }
+
+    /* The popup form - hidden by default */
+    .form-popup {
+    display: none;
+    position: relative;
+    bottom: 0;
+    top: 20px;
+    border: 3px solid #f1f1f1;
+    z-index: 9;
+    }
+
+    /* Add styles to the form container */
+    .form-container {
+    max-width: 600px;
+    padding: 10px;
+    background-color: white;
+    }
+
+    /* Full-width input fields */
+    .form-container input[type=text], .form-container input[type=password] {
+    width: 50%;
+    padding: 15px;
+    margin: 5px 5px 22px 5px;
+    border: none;
+    background: #f1f1f1;
+    }
+
+    /* When the inputs get focus, do something */
+    .form-container input[type=text]:focus, .form-container input[type=password]:focus {
+    background-color: #ddd;
+    outline: none;
+    padding: 10px;
+    }
+
+    /* Set a style for the submit/login button */
+    .form-container .btn {
+    background-color: #04AA6D;
+    color: white;
+    padding: 16px 20px;
+    border: none;
+    cursor: pointer;
+    width: 40%;
+    margin-bottom: 10px;
+    opacity: 0.8;
+    }
+
+    /* Add a red background color to the cancel button */
+    .form-container .cancel {
+    background-color: red;
+    }
+
+    /* Add some hover effects to buttons */
+    .form-container .btn:hover, .open-button:hover {
+    opacity: 1;
+    }
+    .divheader div {
+    color: #333333;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+    content: "";
+    display: table;
+    clear: both;
+    margin-top: 20px;
+    }
+
+
+    .form {
+    max-width: 100%;
+    }
+    .dropdown {
+    position: relative;
+    font-family: Arial;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    }
+
+    .btn:hover{
+    color: red;
+    }
+    * {box-sizing: border-box}
+/* Full-width input fields */
+  input[type=text], input[type=password] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+}
+
+/* Add a background color when the inputs get focus */
+input[type=text]:focus, input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+
+/* Add padding to container elements */
+.container {
+  padding: 16px;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: center; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 25%;
+  top: 25%;
+  width: 50%; /* Full width */
+  height: 20%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: #474e5d;
+  padding-top: 0px;
+  /* opacity: 50%; */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  border: 1px solid #888;
+  width: 100%; /* Could be more or less, depending on screen size */
+  height: 100%;
+  padding-bottom: 10px;
+  /* opacity: 100%; */
+}
+
+/* The Close Button (x) */
+.close {
+  position: absolute;
+  right: 35px;
+  top: 15px;
+  font-size: 40px;
+  font-weight: bold;
+  color: #f1f1f1;
+}
+
+.close:hover,
+.close:focus {
+  color: #f44336;
+  cursor: pointer;
+}
+
+/* Clear floats */
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+</style>
+
+@* <form autocomplete="off" action="/action_page.php">
+    <div class="autocomplete" style="width:300px;">
+        <input id="myInput2" type="text" name="myCountry" placeholder="Country">
+    </div>
+    <input type="submit">
+</form> *@
+
+@if (Model.AccessLevel >= 2)
+{
+    <button type="button" class="collapsible">Manage</button>
+    <div class="content">
+
+        @if (Model.AccessLevel >= 3)
+        {
+            <div class="list-group-item rounded">
+                @foreach (var admin in Model.SuperAdmins)
+                {
+                    <div class="row" style="padding:8px">
+                        <div class="column left">
+                            @admin
+                        </div>
+                        <div class="column right">
+                            Super Admin
+                        </div>
+                    </div>
+                }
+                @foreach (var user in Model.GroupUsers)
+                {
+                    if (Model.SuperAdmins.Contains(user.Username))
+                    {
+                        continue;
+                    }
+
+                    <div class="row" style="padding:8px">
+                        <div class="column center">
+                            @user.Username
+                        </div>
+                        <div class="column center_right">
+                            <form method="post" action="UpdateManager" id="formUpdate" class="form">
+                                <input type="hidden" name="groupId" value="@Model.Id" />
+                                <input type="hidden" name="userName" value="@user.Username" />
+                                <div class="row">
+                                    <div class="column center">
+                                        <select name="accessLevel" id="accessLevel" class="dropdown">
+                                            <option value="" selected disabled hidden>@user.RoleTitle</option>
+                                            <option value="1">Viewer</option>
+                                            <option value="2">Editor</option>
+                                            <option value="3">Admin</option>
+                                            @if (Model.AccessLevel == 4)
+                                            {
+                                                <option value="4">Super Admin</option>
+                                            }
+                                            <option value="0">No Access (Remove)</option>
+                                        </select>
+                                    </div>
+                                    <div class="column center_right">
+                                        <button type="submit" class="btn-red" name="submit">Update</button>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        <!-- A button to open the popup form -->
+        <button class="btn-blue" onclick="openForm('myForm'); closeForm('myForm1')">Add Member</button>
+        @if (Model.AccessLevel >= 3)
+        {
+            <button class="btn-blue" onclick="openForm('myForm1'); closeForm('myForm')">Add Manager</button>
+
+            
+            
+
+            <!-- The form action="/action_page.php"-->
+            <div class="form-popup" id="myForm1">                
+                <form method="post" class="form-container" action="AddManager">
+                    <h2>Add Manager</h2>
+
+                    <div>
+                        <label for="email"><b>Username</b></label>
+                        <input type="text" placeholder="Enter Username" name="email" required>
+                    </div>
+                    <div>
+                        @* <label for="group"><b>Group</b></label> *@
+                        <input type="hidden" name="group" value="@Model.Id" />
+                    </div>
+                    <div>
+                        <label for="accessLevel"><b>Choose an access level:</b></label>
+
+                        <select name="accessLevel" id="accessLevel" class="dropdown">
+
+                            <option value="1">Viewer</option>
+                            <option value="2">Editor</option>
+                            <option value="3">Admin</option>
+                            @if (Model.AccessLevel == 4)
+                            {
+                                <option value="4">Super Admin</option>
+                            }
+                        </select>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn-blue" name="submit" value="2">Submit</button>
+                        <button type="button" class="btn-red" onclick="closeForm('myForm1')">Close</button>
+                    </div>
+                    <input type="hidden" />
+                </form>
+            </div>
+        }
+
+        <div class="form-popup" id="myForm">
+            <form method="post" class="form-container">
+                <h2>Add Member</h2>
+
+                <div>
+                    <label for="email"><b>Email</b></label>
+                    <input type="text" placeholder="Enter Email" name="email" required>
+                </div>
+                <div>
+                    @* <label for="group"><b>Group</b></label> *@
+                    <input type="hidden" name="group" value="@Model.Id" />
+                </div>
+                <div>
+                    <button type="submit" class="btn-blue" name="submit" value="0">Submit</button>
+                    <button type="button" class="btn-red" onclick="closeForm('myForm')">Close</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+}
+<div class="row">
+    <div class="column center">
+        <h1>Group Members - @Model.Name</h1> @Model.Id
+    </div>
+    <div class="column center_right">
+        @if (User.ContactAccess == 4)
+        {
+
+            <!-- Button to open the modal -->
+            <button class="btn-red" onclick="document.getElementById('id01').style.display='block'" style="float:right;">Delete Group</button>
+
+            <!-- The Modal (contains the Sign Up form) -->
+            <div id="id01" class="modal">
+               @*  <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">times;</span> *@
+                <form class="modal-content" method="post" action="DeleteGroup">
+                    <div class="container">
+                        <h1>Are you sure you want to delete this group?</h1>
+
+
+                        <label>
+                            <input type="checkbox" name="understand" style="margin-bottom:15px" required> I understand that this will permanantly delete this group
+                        </label>
+                        <input type="hidden" name="groupId" value="@Model.Id" />
+
+                        <div class="clearfix">
+                            <button type="button" onclick="document.getElementById('id01').style.display='none'" class="btn-red" style="width:100px">No</button>
+                            <button type="submit" name="submit" class="btn-blue" style="width:100px" value="4">Yes</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+
+            @* <a href="/Contacts/AddContact" style="float:right; margin-left:5px;"><button class="btn-red">Delete Group</button></a> *@
+
+        }
+    </div>
+</div>
+
+<hr style="height:4px;border-width:2;color:#0e597d;background-color:#0e597d">
+<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names or emails..">
+
+
+
+<ul id="myUL">
+
+
+    @{
+        foreach (var item in Model.Members)
+        {
+            if (item.Name != null)
+            {
+                <li>
+                    <a href="/Contacts/Contact?email=@item.Email">
+                        <div class="row">
+                            <div class="column left"><img src="@item.PhotoUrl" width="50" class="profile"/> @item.Name</div>
+                            <div class="visually-hidden">@item.Email</div>
+                            @if (Model.AccessLevel >= 2)
+                            {
+                                <div class="column right">
+                                    <form method="post">
+                                        <input type="hidden" name="group" value="@Model.Id" />
+                                        <input type="hidden" name="email" value="@item.Email" />
+                                        <button type="submit" class="btn-red" name="submit" value="1">Remove</button>
+                                    </form>
+                                </div>
+                            }
+                        </div>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="/Contacts/Contact?email=@item.Email">
+                        <div class="row">
+                            <div class="column left"><img src="@item.PhotoUrl" width="50" class="profile"/>  @item.Email</div>
+                            @if (Model.AccessLevel >= 2)
+                            {
+                                <div class="column right">
+                                    <form method="post">
+                                        <input type="hidden" name="group" value="@Model.Id" />
+                                        <input type="hidden" name="email" value="@item.Email" />
+                                        <button type="submit" class="btn-red" name="submit" value="1">Remove</button>
+                                    </form>
+                                </div>
+                            }
+                        </div>
+                    </a>
+                </li>
+            }
+        }
+    }
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    function openForm(id) {
+      document.getElementById(id).style.display = "block";
+    }
+
+    function closeForm(id) {
+      document.getElementById(id).style.display = "none";
+    }
+
+    function myFunction() {
+        // Declare variables
+        var input, filter, ul, li, a, i, txtValue;
+        input = document.getElementById('myInput');
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("myUL");
+        li = ul.getElementsByTagName('li');
+
+        // Loop through all list items, and hide those who don't match the search query
+        for (i = 0; i < li.length; i++) {
+            a = li[i].getElementsByTagName("a")[0];
+            txtValue = a.textContent || a.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            }
+        }
+    }
+</script>
+
+
+<script>
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        });
+    }
+</script>
+
+<script>
+    // Get the modal
+    var modal = document.getElementById('id01');
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    
+</script>
+
+@* <script>
+    autocomplete(document.getElementById("myInput2"), @countries);
+</script> *@

@@ -1,0 +1,72 @@
+﻿@model GoogleGroups.Models.ContactModel;
+@using Newtonsoft.Json;
+@{
+    ViewData["Title"] = "Update Contacts";
+
+    var oldContact = Model;
+    var email = oldContact.Email;
+    string json = JsonConvert.SerializeObject(oldContact);
+}
+
+
+<script>
+    $('#multiple-select').mobiscroll().select({
+        inputElement: document.getElementById('my-input'),
+        touchUi: false
+    });
+
+    $(document).ready(function () {
+
+        var multipleCancelButton = new Choices('#choices-multiple-remove-button', {
+            removeItemButton: true,
+            maxItemCount: 5,
+            searchResultLimit: 5,
+            renderChoiceLimit: 5
+        });
+
+
+    });
+
+</script>
+
+<h2>Update Contact</h2>
+<hr style="height:4px;border-width:2;color:#0e597d;background-color:#0e597d">
+
+<div class="list-group-item rounded">
+
+    <form method="post">
+        <div style="width:30%;justify-content:center">
+
+            <lable for="firstName" class="label-custom">First Name:</lable>
+            <input type="text" class="text-custom" name="firstName" value="@oldContact.Name.Split(" ")[0]" />
+
+            <hr style="height:0px;border-width:0;">
+
+            <lable for="lastName" class="label-custom">Last Name:</lable>
+            <input type="text" class="text-custom" name="lastName" value="@oldContact.Name.Split(" ")[1]" />
+            <hr style="height:0px;border-width:0;">
+
+
+            <lable for="email" class="label-custom">Email:</lable>
+            <input type="text" class="text-custom" name="email" value="@email" />
+            <hr style="height:0px;border-width:0;">
+
+
+
+            <lable for="phone" class="label-custom">Phone Number:</lable>
+            <input type="text" class="text-custom" name="phone" value="@oldContact.Phone" />
+
+            <input type="hidden" name="oldContact" value="@json" />
+
+        </div>
+
+
+        <hr style="height:0px;border-width:0;">
+
+
+
+        <button type="submit" class="btn-blue" name="submit">Save</button>
+        <a href="/Contacts/Contact?email=@oldContact.Email"><button type="button" class="btn-red">Cancel</button></a>
+    </form>
+</div>
+@*  <meta http-equiv="submit" content="5; URL=/Contacts/Contact?email=@email" /> *@

@@ -1,0 +1,68 @@
+﻿@using GoogleGroups.App_Code;
+@using GoogleGroups.Extensions
+@using Newtonsoft.Json;
+
+@{
+    ViewData["Title"] = "Contacts";
+    var contacts = ViewData["contacts"] as List<ContactModel>;
+    var user = Context.Session.GetObject<UserModel>("User");
+
+
+}
+<div class="row">
+    <div class="column center">
+        <h1>Contacts</h1>
+    </div>
+    <div class="column center_right">
+        <span class="badge">@contacts.Count</span>
+        @if (MyAuthorizeAttribute.GetUserPermission(user.UserName, "contacts") >= 2)
+        {
+            <a href="/Contacts/AddContact" style="float:right; margin-left:5px;"><button class="btn-blue">Add Contact</button></a>
+        }
+    </div>
+</div>
+<hr style="height:4px;border-width:2;color:#0e597d;background-color:#0e597d">
+@* <a href="/Contacts/AddContact">Add Contact</a> *@
+
+<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names, emails or phone numbers...">
+
+<ul id="myUL">
+
+    @{
+        foreach (var contact in contacts)
+        {
+            <li>
+                <a href="/Contacts/Contact?email=@contact.Email">
+                    <div class="row">
+                        <div class="column left"><img src="@contact.PhotoUrl" width="50" class="profile" />  @contact.Name</div>
+                        <div class="visually-hidden">@contact.Email</div>
+                        <div class="visually-hidden">@contact.Phone</div>
+                    </div>
+                </a>
+            </li>
+        }
+    }
+</ul>
+
+
+<script>
+    function myFunction() {
+        // Declare variables
+        var input, filter, ul, li, a, i, txtValue;
+        input = document.getElementById('myInput');
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("myUL");
+        li = ul.getElementsByTagName('li');
+
+        // Loop through all list items, and hide those who don't match the search query
+        for (i = 0; i < li.length; i++) {
+            a = li[i].getElementsByTagName("a")[0];
+            txtValue = a.textContent || a.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            }
+        }
+    }
+</script>

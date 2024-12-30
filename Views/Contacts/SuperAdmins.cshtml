@@ -1,0 +1,186 @@
+﻿@model List<string>;
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<style type="text/css">
+.form-popup {
+    display: none;
+    position: relative;
+    bottom: 20px;
+    top: 20px;
+    border: 3px solid #f1f1f1;
+    z-index: 9;
+    margin-bottom: 30px;
+    }
+
+    /* Add styles to the form container */
+    .form-container {
+    max-width: 100%;
+    padding: 10px;
+    background-color: white;
+    }
+
+    /* Full-width input fields */
+    .form-container input[type=text], .form-container input[type=password] {
+    width: 50%;
+    padding: 15px;
+    margin: 5px 5px 22px 5px;
+    border: none;
+    background: #f1f1f1;
+    }
+
+    /* When the inputs get focus, do something */
+    .form-container input[type=text]:focus, .form-container input[type=password]:focus {
+    background-color: #ddd;
+    outline: none;
+    padding: 10px;
+    }
+
+    /* Set a style for the submit/login button */
+    .form-container .btn {
+    background-color: #04AA6D;
+    color: white;
+    padding: 16px 20px;
+    border: none;
+    cursor: pointer;
+    width: 40%;
+    margin-bottom: 10px;
+    opacity: 0.8;
+    }
+
+    /* Add a red background color to the cancel button */
+    .form-container .cancel {
+    background-color: red;
+    }    
+</style>
+
+<div class="row">
+    <div class="column center">
+        <h1>Super Admins</h1>
+    </div>
+    <div class="column center_right">
+
+        @* <a href="/Contacts/AddContact" style="float:right; margin-left:5px;"><button class="btn-blue">Add Super Admin</button></a> *@
+        <button class="btn-blue" onclick="openForm('myForm')" style="float:right;">Add Super Admin</button>
+        
+
+        
+    </div>
+</div>
+<hr style="height:4px;border-width:2;color:#0e597d;background-color:#0e597d">
+<div class="form-popup" id="myForm">
+            <form method="post" class="form-container" action="AddSuperAdmin">
+                <h2>Add Super Admin</h2>
+
+                <div>
+                    <label for="username"><b>Username</b></label>
+                    <input type="text" placeholder="Enter Username" name="username" required>
+                </div>
+                <div>
+                    <button type="submit" class="btn-blue" name="submit" value="0">Submit</button>
+                    <button type="button" class="btn-red" onclick="closeForm('myForm')">Close</button>
+                </div>
+            </form>
+        </div>
+<div class="list-group-item rounded">
+    @foreach (var admin in Model)
+    {
+        <div class="row border-bottom" >
+            <div class="column left">
+                @admin
+            </div>
+           <div class="column right">
+                <form method="post" action="RemoveSuperAdmin">
+                    <input type="hidden" name="username" value="@admin"/>
+                    <button type="submit" class="btn-red" name="submit">Remove</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+<h1>Settings</h1>
+
+<div class="list-group-item" style="border-radius:10px">
+    <h3>Upload logo</h3>
+    <form asp-action="UploadLogo" enctype="multipart/form-data" method="post">
+        <input type="file" id="file" name="file">
+        <button type="submit" class="btn-blue">Upload</button>
+    </form>
+    <img src="~/Data/Icons/logo.png" height="50" style="margin-top:10px"/>
+</div>
+
+<div class="list-group-item" style="border-radius:10px;margin-top:10px">
+    <h3>Upload favicon</h3>
+    <form asp-action="UploadFavicon" enctype="multipart/form-data" method="post">
+        <input type="file" id="favicon" name="favicon">
+        <button type="submit" class="btn-blue">Upload</button>
+    </form>
+    <img src="~/Data/Icons/favicon.png" height="50" style="margin-top:10px" />
+</div>
+
+<div class="list-group-item" style="border-radius:10px;margin-top:10px">
+    <h3>Upload Certificate</h3>
+    <form asp-action="UploadCert" enctype="multipart/form-data" method="post">
+        <input type="file" id="cert" name="cert">
+        <button type="submit" class="btn-blue">Upload</button>
+    </form>
+</div>
+
+<div class="list-group-item" style="border-radius:10px;margin-top:10px">
+    <h3>Connect Google Cloud Project</h3>
+    <form enctype="multipart/form-data" method="post">
+        <div>
+            <label name="orgName">Organization Name:</label>
+            <input type="text" class="text-custom" name="orgName" value="@Helper.EnvVars("OrganizationName")" />
+        </div>
+        <div>
+            <label name="domain">Domain:</label>
+            <input type="text" class="text-custom" name="domain" value="@Helper.EnvVars("Domain")" placeholder="example.com"/>
+        </div>
+        <div>
+            <label name="superAdmin">Domain Super Admin:</label>
+            <input type="text" class="text-custom" name="superAdmin" value="@Helper.EnvVars("AdminEmail")" placeholder="admin@example.com" />
+        </div>
+        <div>
+            <label name="clientId">Client ID:</label>
+            <input type="text" class="text-custom" value="@Helper.CredVal("ClientID")" name="clientId" placeholder="012345678900-abcdDefGghijklLmnopQrsTtuvwWxYyZ.apps.googleusercontent.com" />
+        </div>
+        <div>
+            <label name="clientSecret">Client Secret:</label>
+            <input type="text" class="text-custom" name="clientSecret" value="@Helper.CredVal("ClientSecret")" />
+        </div>
+        <div>
+            <label name="serviceAccount">Service Account ID:</label>
+            <input type="text" class="text-custom" name="serviceAccount" value="@Helper.EnvVars("ServiceAccountClientID")" />
+        </div>
+        <div>
+            <label name="file">Credentials file (.p12)</label><br />
+            <input type="file" name="file" style="margin-top:8px; margin-bottom:15px">
+        </div>
+        <div>
+        
+            <label name="credPass">Credentials File Password:</label>
+            <input type="text" class="text-custom" name="credPass" value="@Helper.CredVal("CredPass")" placeholder="notasecret" />
+        </div>
+        <div>
+            <button type="submit" class="btn-blue">Save</button>
+        </div>
+    </form>
+
+</div>
+
+
+<script>
+    function openForm(id) {
+        document.getElementById(id).style.display = "block";
+    }
+
+    function closeForm(id) {
+        document.getElementById(id).style.display = "none";
+    }
+</Script>

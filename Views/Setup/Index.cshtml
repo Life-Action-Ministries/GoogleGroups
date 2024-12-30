@@ -1,0 +1,72 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<h1>Set up Google Groups Manager</h1>
+
+<div class="list-group-item" style="border-radius:10px">
+    <h3>Upload your logo</h3>
+    <form asp-action="UploadLogo" enctype="multipart/form-data" method="post">
+        <input type="file" id="file" name="file">
+        <button type="submit" class="btn-blue">Upload</button>
+    </form>
+    <img src="./Icons/logo.*" height="50" style="margin-top:10px"/>
+</div>
+
+<div class="list-group-item" style="border-radius:10px">
+    <h3>Upload favicon</h3>
+    <form asp-action="UploadFavicon" enctype="multipart/form-data" method="post">
+        <input type="file" id="favicon" name="favicon">
+        <button type="submit" class="btn-blue">Upload</button>
+    </form>
+    <img src="./favicon.png" height="50" style="margin-top:10px" />
+</div>
+
+<div class="list-group-item" style="border-radius:10px;margin-top:10px">
+    <h3>Connect Google Cloud Project</h3>
+    <form enctype="multipart/form-data" method="post">
+        <div>
+            <label name="orgName">Organization Name:</label>
+            <input type="text" class="text-custom" name="orgName" value="@Helper.EnvVars("OrganizationName")" required />
+        </div>
+        <div>
+            <label name="domain">Domain:</label>
+            <input type="text" class="text-custom" name="domain" value="@Helper.EnvVars("Domain")" placeholder="example.com" required />
+        </div>
+        <div>
+            <label name="superAdmin">Domain Super Admin:</label>
+            <input type="text" class="text-custom" name="superAdmin" value="@Helper.EnvVars("AdminEmail")" placeholder="admin@example.com" required/>
+        </div>
+        <div>
+            <label name="clientId">Client ID:</label>
+            <input type="text" class="text-custom" value="@Helper.CredVal("ClientID")" name="clientId" required />
+        </div>
+        <div>
+            <label name="clientSecret">Client Secret:</label>
+            <input type="text" class="text-custom" name="clientSecret" value="@Helper.CredVal("ClientSecret")" required />
+        </div>
+        <div>
+            <label name="serviceAccount">Service Account ID:</label>
+            <input type="text" class="text-custom" name="serviceAccount" value="@Helper.EnvVars("ServiceAccountClientID")" required/>
+        </div>
+        <div>
+            <label name="file">Credentials file (.p12)</label><br />
+            <input type="file" name="file" style="margin-top:8px; margin-bottom:15px" required>
+        </div>
+        <div>
+        
+            <label name="credPass">Credentials File Password:</label>
+            <input type="text" class="text-custom" name="credPass" value="@Helper.CredVal("CredPass")" placeholder="notasecret" required/>
+        </div>
+        <div>
+            <label name="username">Super Admin Username:</label>
+            <input type="text" class="text-custom" name="username" placeholder="Super Admin Username" required />
+        </div>
+        <div>
+            <button type="submit" class="btn-blue">Save</button>
+        </div>
+    </form>
+
+</div>

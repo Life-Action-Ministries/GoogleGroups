@@ -1,0 +1,33 @@
+version: '3.4'
+
+networks:
+  dev:
+    driver: bridge
+
+services:
+  GoogleGroups:
+    image: googlegroups:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=<Certificate Password>
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/wwwroot/Data/sslCert.pfx
+    volumes:
+      - ~/Data:/app/wwwroot/Data
+    networks:
+      - dev
+    restart: always
+  
+  Redis:
+    image: redis
+    ports:
+      - 5002:6379
+    networks:
+      - dev
+    restart: always

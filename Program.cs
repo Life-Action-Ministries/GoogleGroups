@@ -71,9 +71,9 @@ app.UseRouting();
 
 app.UseSession();
 
-//app.MapControllerRoute(
-//    name: "setup",
-//    pattern: "{controller=Setup}/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "setup",
+    pattern: "{controller=Setup}/{action=Index}/{id?}");
 
 app.UseAuthentication();
 app.UseAuthorization();

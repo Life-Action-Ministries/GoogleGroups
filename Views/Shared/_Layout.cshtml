@@ -22,7 +22,15 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 @{
-                    var User = Context.Session.GetObject<UserModel>("User");
+                    UserModel User;
+                    if (Context.Session.GetObject<UserModel>("User") != null)
+                    {
+                        User = Context.Session.GetObject<UserModel>("User");
+                    }
+                    else
+                    {
+                        User = new UserModel();
+                    }
                 }
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
@@ -39,12 +47,16 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Contacts" asp-action="Index">Contacts</a>
                         </li>
                         @{
-                            if(User.ContactAccess == 4)
+                            try
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Contacts" asp-action="SuperAdmins">Admin</a>
-                                </li>
+                                if (User.ContactAccess == 4)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Contacts" asp-action="SuperAdmins">Admin</a>
+                                    </li>
+                                }
                             }
+                            catch (Exception ex) { Console.WriteLine(ex.Message); IgnoreBody(); }
                         }
                     </ul>
                 </div>
